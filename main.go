@@ -24,6 +24,17 @@ type user struct {
 var db *sql.DB
 var err error
 
+func checkRegistrationDataMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		fmt.Println("Pre Middleware Code Running")
+
+		c.Next()
+
+		fmt.Println("Post Middleware Code Running")
+	}
+
+}
+
 func signUp(c *gin.Context) {
 	var newUser user
 
@@ -128,7 +139,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/users", getUsers)
 	router.GET("users/:id", getUserByID)
-	router.POST("/signup", signUp)
+	router.POST("/signup", checkRegistrationDataMiddleware(), signUp)
 
 	defer db.Close()
 
