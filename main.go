@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/joho/godotenv"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -26,7 +27,26 @@ var err error
 
 func checkRegistrationDataMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println("Pre Middleware Code Running")
+		var newUser user
+
+		err := c.ShouldBindBodyWith(&newUser, binding.JSON)
+
+		// write Code to check data
+
+		// values := reflect.ValueOf(newUser)
+
+		// for i := 0; i < values.NumField(); i++ {
+		// 	if values.Field(i).Interface() == "" {
+		// 		fmt.Println("Error")
+		// 		c.JSON(http.StatusBadRequest, nil)
+		// 		return
+		// 	}
+		// }
+
+		if err != nil {
+			fmt.Println("Error")
+			panic(err)
+		}
 
 		c.Next()
 
@@ -38,10 +58,15 @@ func checkRegistrationDataMiddleware() gin.HandlerFunc {
 func signUp(c *gin.Context) {
 	var newUser user
 
-	err := c.BindJSON(&newUser)
+	// err := c.BindJSON(&newUser)
+
+	err := c.ShouldBindBodyWith(&newUser, binding.JSON)
+
+	fmt.Println(err)
 
 	if err != nil {
-		return
+		fmt.Println("An error occured")
+		panic(err)
 	}
 
 	// PASSWORD ecryption will occur Here
